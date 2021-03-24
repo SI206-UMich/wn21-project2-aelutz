@@ -1,9 +1,15 @@
+#Name: Analese Lutz
+#Email: aelutz@umich.edu
+#GitHub repository: https://github.com/SI206-UMich/wn21-project2-aelutz
+
 from bs4 import BeautifulSoup
 import requests
 import re
 import os
 import csv
 import unittest
+
+
 
 
 def get_titles_from_search_results(filename):
@@ -50,7 +56,7 @@ def get_titles_from_search_results(filename):
     
 
 
-def get_search_links(happy):
+def get_search_links():
     """
     Write a function that creates a BeautifulSoup object after retrieving content from
     "https://www.goodreads.com/search?q=fantasy&qid=NwUsLiA2Nc". Parse through the object and return a list of
@@ -63,9 +69,21 @@ def get_search_links(happy):
     “https://www.goodreads.com/book/show/kdkd".
 
     """
-    happy = 'hi'
-    
-    return "hello"
+    #create the soup object
+    url = "https://www.goodreads.com/search?q=fantasy&qid=NwUsLiA2Nc"
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    #get url info
+    table_tag = soup.find('table', class_= 'tableList')
+    table_rows = table_tag.find_all('tr')[:10]
+    link_list = []
+    for row in table_rows:
+        book_link = row.find('a', class_= 'bookTitle')['href']
+        link = "https://www.goodreads.com" + book_link
+        link_list.append(link)
+
+    return link_list
 
 
 def get_book_summary(book_url):
@@ -82,7 +100,7 @@ def get_book_summary(book_url):
     Make sure to strip() any newlines from the book title and number of pages.
     """
     happy = 'hi'
-    return "hello"
+    pass
 
 
 def summarize_best_books(filepath):
@@ -97,7 +115,7 @@ def summarize_best_books(filepath):
     to your list of tuples.
     """
     happy = 'hi'
-    return "hello"
+    pass
 
 
 def write_csv(data, filename):
@@ -121,7 +139,7 @@ def write_csv(data, filename):
     This function should not return anything.
     """
     happy = 'hi'
-    return "hello"
+    pass
 
 
 def extra_credit(filepath):
@@ -137,7 +155,7 @@ def extra_credit(filepath):
 class TestCases(unittest.TestCase):
 
     # call get_search_links() and save it to a static variable: search_urls
-
+    search_urls = get_search_links()
 
     def test_get_titles_from_search_results(self):
         # call get_titles_from_search_results() on search_results.htm and save to a local variable
@@ -156,13 +174,16 @@ class TestCases(unittest.TestCase):
 
     def test_get_search_links(self):
         # check that TestCases.search_urls is a list
-
+        self.assertEqual(type(TestCases.search_urls), list)
         # check that the length of TestCases.search_urls is correct (10 URLs)
-
-
+        self.assertEqual(len(TestCases.search_urls), 10)
+        #print(TestCases.search_urls)
         # check that each URL in the TestCases.search_urls is a string
         # check that each URL contains the correct url for Goodreads.com followed by /book/show/
-        pass
+        for url in TestCases.search_urls:
+            self.assertEqual(type(url), str)
+            self.assertTrue(url.startswith("https://www.goodreads.com/book/show/"))
+        
 
 
     def test_get_book_summary(self):
