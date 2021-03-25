@@ -40,8 +40,8 @@ def get_titles_from_search_results(filename):
     book_author_tups = []
     for row in table_rows:
         #get book title
-        title_tag = row.find('a')
-        title = title_tag.get('title', None).strip()
+        title = row.find('span', itemprop= 'name').text.strip()
+        #title = title_tag.get('title', None).strip()
         #get author name
         author_tag = row.find('a', {'class':'authorName'})
         author = author_tag.find('span').text.strip()
@@ -171,8 +171,16 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    happy = 'hi'
-    pass
+    #setup
+    root_path = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.join(root_path, filename)
+
+    #write lines to csvfile
+    with open(filepath, "w") as f:
+        f.write("Book title,Author Name\n")
+        for tup in data:
+            f.write(tup[0] + "," + tup[1] + "\n")
+
 
 
 def extra_credit(filepath):
@@ -201,9 +209,9 @@ class TestCases(unittest.TestCase):
         for tup in search_result_tups:
             self.assertEqual(type(tup), tuple)
         # check that the first book and author tuple is correct (open search_results.htm and find it)
-        self.assertEqual(search_result_tups[0], ('Harry Potter and the Deathly Hallows', 'J.K. Rowling'))
+        self.assertEqual(search_result_tups[0], ('Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'))
         # check that the last title is correct (open search_results.htm and find it)
-        self.assertEqual(search_result_tups[-1][0], 'Harry Potter: The Prequel')
+        self.assertEqual(search_result_tups[-1][0], 'Harry Potter: The Prequel (Harry Potter, #0.5)')
 
     def test_get_search_links(self):
         # check that TestCases.search_urls is a list
@@ -260,20 +268,24 @@ class TestCases(unittest.TestCase):
 
     def test_write_csv(self):
         # call get_titles_from_search_results on search_results.htm and save the result to a variable
-
+        search_result_tups = get_titles_from_search_results("search_results.htm")
+        print(search_result_tups)
         # call write csv on the variable you saved and 'test.csv'
-
+        write_csv(search_result_tups, 'test.csv')
         # read in the csv that you wrote (create a variable csv_lines - a list containing all the lines in the csv you just wrote to above)
-
-
+        #set up for opening the file
+        root_path = os.path.dirname(os.path.abspath(__file__))
+        filepath = os.path.join(root_path, 'test.csv')
+        with open(filepath, 'r') as f:
+            csv_lines = f.readlines()
         # check that there are 21 lines in the csv
-
+        self.assertEqual(len(csv_lines), 21)
         # check that the header row is correct
-
+        self.assertEqual(csv_lines[0].strip(), "Book title,Author Name")
         # check that the next row is 'Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'
-
+        self.assertEqual(csv_lines[1].strip(), 'Harry Potter and the Deathly Hallows (Harry Potter, #7),J.K. Rowling')
         # check that the last row is 'Harry Potter: The Prequel (Harry Potter, #0.5)', 'Julian Harrison (Introduction)'
-        pass
+        self.assertEqual(csv_lines[-1].strip(), 'Harry Potter: The Prequel (Harry Potter, #0.5),J.K. Rowling')
 
 
 if __name__ == '__main__':
