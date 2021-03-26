@@ -34,14 +34,12 @@ def get_titles_from_search_results(filename):
     soup = BeautifulSoup(search_results_text, "html.parser")
     search_results_table = soup.find('table', {'class':'tableList'})
     table_rows = search_results_table.find_all('tr')
-    #print(search_results_table)
 
     #find author name and book titles
     book_author_tups = []
     for row in table_rows:
         #get book title
         title = row.find('span', itemprop= 'name').text.strip()
-        #title = title_tag.get('title', None).strip()
         #get author name
         author_tag = row.find('a', {'class':'authorName'})
         author = author_tag.find('span').text.strip()
@@ -190,7 +188,6 @@ def extra_credit(filepath):
     Please see the instructions document for more information on how to complete this function.
     You do not have to write test cases for this function.
     """
-    happy = 'hi'
     pass
 
 class TestCases(unittest.TestCase):
@@ -226,7 +223,6 @@ class TestCases(unittest.TestCase):
             self.assertTrue(url.startswith("https://www.goodreads.com/book/show/"))
         
 
-
     def test_get_book_summary(self):
         # create a local variable – summaries – a list containing the results from get_book_summary()
         # for each URL in TestCases.search_urls (should be a list of tuples)
@@ -250,7 +246,6 @@ class TestCases(unittest.TestCase):
         self.assertEqual(summaries[0][2], 337)
 
 
-
     def test_summarize_best_books(self):
         # call summarize_best_books and save it to a variable
         best_books_2020 = summarize_best_books("best_books_2020.htm")
@@ -263,13 +258,12 @@ class TestCases(unittest.TestCase):
             self.assertEqual(len(book), 3)
         # check that the first tuple is made up of the following 3 strings:'Fiction', "The Midnight Library", 'https://www.goodreads.com/choiceawards/best-fiction-books-2020'
         self.assertEqual(best_books_2020[0], ('Fiction', "The Midnight Library", 'https://www.goodreads.com/choiceawards/best-fiction-books-2020'))
-        # check that the last tuple is made up of the following 3 strings: 'Antiracist Baby', 'A Beautiful Day in the Neighborhood: The Poetry of Mister Rogers', 'https://www.goodreads.com/choiceawards/best-picture-books-2020'
+        # check that the last tuple is made up of the following 3 strings: 'Picture Books', 'Antiracist Baby', 'https://www.goodreads.com/choiceawards/best-picture-books-2020'
         self.assertEqual(best_books_2020[-1], ('Picture Books', 'Antiracist Baby', 'https://www.goodreads.com/choiceawards/best-picture-books-2020'))
 
     def test_write_csv(self):
         # call get_titles_from_search_results on search_results.htm and save the result to a variable
         search_result_tups = get_titles_from_search_results("search_results.htm")
-        print(search_result_tups)
         # call write csv on the variable you saved and 'test.csv'
         write_csv(search_result_tups, 'test.csv')
         # read in the csv that you wrote (create a variable csv_lines - a list containing all the lines in the csv you just wrote to above)
